@@ -1,0 +1,11 @@
+[project]
+name = "localstack-mirrord-demo"
+readme = "README.md"
+description = "Simple demo illustrating LocalStack with MirrorD"
+
+dependencies = [
+    "boto3",
+    "localstack",
+    "ruff"
+]
+version = "0.0.1"
