@@ -30,7 +30,7 @@ debug-main-service:   ## Use mirrord to attach and debug the Main service
 
 debug-users-service:   ## Use mirrord to attach and debug the Users service
 	export pod_name=$$(kubectl get pods -o custom-columns=":metadata.name" | grep demo-users-service); \
-		mirrord exec -t pod/$$pod_name --steal python demo/services/users-service/service.py
+		mirrord exec -t pod/$$pod_name --steal -- python -Xfrozen_modules=off demo/services/users-service/service.py
 
 status:         ## Show the deployment status of the app
 	$(VENV_RUN); kubectl get pods
