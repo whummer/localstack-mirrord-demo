@@ -1,6 +1,5 @@
 import os
 import time
-
 from flask import Flask, request, jsonify
 import boto3
 import uuid
@@ -40,6 +39,8 @@ def create_user():
             "email": email,
             "created_at": int(time.time()),
         },
+        # TODO: uncomment the following for testing live changes ...
+        # ConditionExpression="attribute_not_exists(username)"
     )
 
     result = {
@@ -59,9 +60,8 @@ def get_user(username):
     item = response.get("Item")
     if not item:
         return jsonify({"message": f"User with username '{username}' not found"}), 404
-    item = {"foo": "bar"}
     return jsonify(item), 200
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=80)
+    app.run(debug=True, host="0.0.0.0", port=80, use_debugger=False)
