@@ -2,6 +2,6 @@ FROM python
 
 RUN pip install boto3 flask requests
 
-ADD demo/services /tmp/services
+ADD demo/services /app/services
 
-CMD ["python", "/tmp/main_service.py"]
+CMD ["python", "/app/services/main-service/service.py"]

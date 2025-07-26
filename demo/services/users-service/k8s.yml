@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ls-mirrord-demo-users-service
+  labels:
+    app: ls-mirrord-demo-users-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ls-mirrord-demo-users-service
+  template:
+    metadata:
+      labels:
+        app: ls-mirrord-demo-users-service
+    spec:
+      containers:
+      - name: ls-mirrord-demo-users-service
+        image: 000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/localstack-mirrord-demo
+        command: [python]
+        args: ["/app/services/users-service/service.py"]
+        ports:
+        - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: users-service
+spec:
+  selector:
+    app: ls-mirrord-demo-users-service
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 80

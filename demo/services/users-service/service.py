@@ -12,21 +12,15 @@ os.environ["AWS_SECRET_ACCESS_KEY"] = "test"
 
 app = Flask(__name__)
 
-DYNAMODB_TABLE_NAME = "Users"
-
+table_name = "Users"
 dynamodb = boto3.resource("dynamodb")
-table = dynamodb.Table(DYNAMODB_TABLE_NAME)
+table = dynamodb.Table(table_name)
 
 
 @app.route("/users", methods=["POST"])
 def create_user():
     """
     Endpoint to create a new user in DynamoDB. Expects a JSON body with 'username' and 'email'.
-    Example:
-    {
-        "username": "john_doe",
-        "email": "john.doe@example.com"
-    }
     """
     data = request.get_json() or {}
     username = data.get("username")
@@ -44,16 +38,16 @@ def create_user():
             "user_id": user_id,
             "username": username,
             "email": email,
-            "created_at": time.time(),
+            "created_at": int(time.time()),
         },
     )
-    return jsonify(
-        {
-            "message": "User saved successfully",
-            "user_id": user_id,
-            "username": username,
-        }
-    ), 201
+
+    result = {
+        "message": "User saved successfully",
+        "user_id": user_id,
+        "username": username,
+    }
+    return jsonify(result), 201
 
 
 @app.route("/users/<string:username>", methods=["GET"])
@@ -65,6 +59,7 @@ def get_user(username):
     item = response.get("Item")
     if not item:
         return jsonify({"message": f"User with username '{username}' not found"}), 404
+    item = {"foo": "bar"}
     return jsonify(item), 200
 
 
