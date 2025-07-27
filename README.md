@@ -18,16 +18,16 @@ Our goal is to deploy the app locally, and then use LocalStack and MirrorD to do
 graph TD
     subgraph LocalStack
         DDB["DynamoDB Table: Users"]
-        
+
         subgraph EKS["Local EKS Cluster"]
             MS["Main Service Pod"]
-            US["User Service Pod"]
+            US["Users Service Pod"]
         end
     end
 
     Client["Client Terminal"]
 
-    Process["Debuggable Client Process (User Service)"]
+    Process["Debuggable Client Process (Users Service)"]
 
     %% Invocation Flow
     Client -->|invoke| MS
@@ -84,6 +84,43 @@ When invoking the API endpoint of the `Main` service multiple times in a row, yo
 ```
 botocore.errorfactory.ConditionalCheckFailedException: An error occurred (ConditionalCheckFailedException) when calling the PutItem operation: The conditional request failed
 ```
+
+## Future Work
+
+In a future iteration, we're aiming to showcase a demo to support _hybrid scenarios_, i.e., using LocalStack to develop EKS pods locally while keeping a connection to other pods/services in a remote EKS cluster running on real AWS.
+This setup is outlined in the figure below.
+
+```mermaid
+graph TD
+    subgraph LocalStack
+        DDB1["DynamoDB Table: Users"]
+
+        subgraph EKS1["Local EKS Cluster"]
+            US1["Users Service Pod (Debuggable Process)"]
+        end
+    end
+
+    subgraph "Real AWS Account"
+        DDB2["DynamoDB Table: Users"]
+
+        subgraph EKS2["EKS Cluster in AWS"]
+            MS2["Main Service Pod"]
+            US2["Users Service Pod"]
+        end
+    end
+
+    Client["Client Terminal"]
+
+    %% Invocation Flow
+    Client -->|invoke| MS2
+    MS2 <-->|proxy via mirrord| US1
+    US1 -->|query| DDB1
+    MS2 -.->|call| US2
+    US2 -.->|query| DDB2
+    Client -->|develop and debug locally| US1
+```
+
+More details on this hybrid setup following soon!
 
 ## License
 
