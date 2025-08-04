@@ -15,6 +15,11 @@ table_name = "Users"
 dynamodb = boto3.resource("dynamodb")
 table = dynamodb.Table(table_name)
 
+# TODO: fix the setup below - currently resulting in "OSError / Unknown error: 111" when enabled via mirrord
+# import debugpy
+# debugpy.listen(("0.0.0.0", 19891))
+# debugpy.wait_for_client()
+
 
 @app.route("/users", methods=["POST"])
 def create_user():
